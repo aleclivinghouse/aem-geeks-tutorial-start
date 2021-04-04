@@ -18,22 +18,33 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.*;
 
-@Model(adaptables = Resource.class,
+@Model(adaptables = SlingHttpServletRequest.class,
         adapters = Author.class,
         defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
 public class AuthorImpl implements Author {
+    private static final Logger LOG = LoggerFactory.getLogger(AuthorImpl.class);
+
+    @SlingObject
+    ResourceResolver resourceResolver;
+
+    @ScriptVariable
+    Page currentPage;
+
 
     @Inject
+    @Via("resource")
     @Default(values = "AEM")
     String fname;
 
     @Inject
+    @Via("resource")
     @Required
     @Default(values = "Geeks")
     String lname;
 
     @Inject
+    @Via("resource")
     boolean professor;
 
     @Override
@@ -49,6 +60,11 @@ public class AuthorImpl implements Author {
     @Override
     public boolean getIsProfessor(){
         return professor;
+    }
+
+    @Override
+    public String getPageTitle(){
+        return currentPage.getTitle();
     }
 
 }
